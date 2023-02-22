@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  rabbitmq:
+    image: "rabbitmq:latest"
+    ports:
+      - "15672:5672"
+    container_name: rabbitmq_latest
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASSWORD: rabbitmq
