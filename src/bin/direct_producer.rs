@@ -1,6 +1,6 @@
-use amiquip::{Connection, Publish, ExchangeDeclareOptions};
+use amiquip::Publish;
 use anyhow::Result;
-use basic_amqp::configuration;
+use basic_amqp::{configuration, amqp_utils};
 
 fn main() -> Result<()> {
     let configuration = configuration::load()?;
@@ -10,13 +10,8 @@ fn main() -> Result<()> {
 
     let amqp_url = configuration.get("amqp_url").unwrap_or(&default_url);
 
-    let mut connection = match amqp_url.starts_with("amqps") {
-        true => Connection::open(&amqp_url),
-        false => Connection::insecure_open(&amqp_url),
-    }?;
+    let mut connection = amqp_utils::get_connection(amqp_url)?;
     let channel = connection.open_channel(None)?;
-    let mut exchange_options = ExchangeDeclareOptions::default();
-    exchange_options.durable = true;
     let exchange = channel.exchange_declare_passive(exchange_name)?;
 
     println!("Publishing message");

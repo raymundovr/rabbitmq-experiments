@@ -1,8 +1,8 @@
 use amiquip::{
-    Connection, ConsumerOptions, ExchangeDeclareOptions, FieldTable, QueueDeclareOptions, ConsumerMessage,
+    ConsumerOptions, ExchangeDeclareOptions, FieldTable, QueueDeclareOptions, ConsumerMessage,
 };
 use anyhow::Result;
-use basic_amqp::configuration;
+use basic_amqp::{configuration, amqp_utils};
 
 fn main() -> Result<()> {
     let default_url = "amqp://localhost:15672".to_string();
@@ -15,14 +15,10 @@ fn main() -> Result<()> {
 
     println!("Initializing consumer to direct Q...");
 
-    let mut connection = match amqp_url.starts_with("amqps") {
-        true => Connection::open(&amqp_url),
-        false => Connection::insecure_open(&amqp_url),
-    }?;
+    let mut connection = amqp_utils::get_connection(amqp_url)?;
 
     let channel = connection.open_channel(None)?;
-    let mut exchange_options = ExchangeDeclareOptions::default();
-    exchange_options.durable = true;
+    let exchange_options = ExchangeDeclareOptions { durable: true, ..ExchangeDeclareOptions::default() };
 
     let exchange = channel.exchange_declare(
         amiquip::ExchangeType::Direct,

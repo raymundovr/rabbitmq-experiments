@@ -13,7 +13,7 @@ fn main() -> Result<()> {
     let default_url = "amqp://localhost:15672".to_string();
     let amqp_url = configuration.get("amqp_url").unwrap_or(&default_url);
 
-    let mut connection = amqp_utils::get_connection(&amqp_url)?;
+    let mut connection = amqp_utils::get_connection(amqp_url)?;
     let channel = connection.open_channel(None)?;
     let exchange = channel.exchange_declare(
         ExchangeType::Fanout,
