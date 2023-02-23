@@ -15,3 +15,17 @@ pub mod configuration {
         }
     }
 }
+
+pub mod amqp_utils {
+    use amiquip::Connection;
+    use anyhow::Result;
+
+    pub fn get_connection(url: &str) -> Result<Connection> {
+        let connection = match url.starts_with("amqps") {
+            true => Connection::open(url),
+            false => Connection::insecure_open(url)
+        }?;
+
+        Ok(connection)
+    }
+}
