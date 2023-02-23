@@ -11,7 +11,7 @@ fn main () -> Result<()> {
     let config = configuration::load()?;
     let amqp_url = config.get("amqp_url").unwrap_or(&default_url);
 
-    let mut connection = get_connection(&amqp_url)?;
+    let mut connection = get_connection(amqp_url)?;
     let channel = connection.open_channel(None)?;
     let exchange = channel.exchange_declare_passive(exchange_name)?;
 
