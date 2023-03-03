@@ -1,4 +1,4 @@
-use amiquip::Publish;
+use amiquip::{Publish, AmqpProperties};
 use anyhow::Result;
 use basic_amqp::{configuration, amqp_utils};
 
@@ -11,7 +11,11 @@ fn main() -> Result<()> {
 
     let mut connection = amqp_utils::get_connection(amqp_url)?;
     let channel = connection.open_channel(None)?;
-    channel.basic_publish("", Publish::new("Hello anonymous Exchange!".as_bytes(), routing_key))?;
+    channel.basic_publish("", Publish::with_properties(
+        b"Hello, world!",
+        routing_key,
+        AmqpProperties::default().with_delivery_mode(2),
+    ))?;
 
     connection.close()?;
 
